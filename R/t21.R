@@ -285,6 +285,9 @@ trisomy21 <- function(age, weight, crlbe, crl, nt, pappa, betahCG, nasalbone, ba
               lr_list=lr_list))
 }
 
+trisomy21 <- function(age, weight, crlbe, crl, nt, pappa, betahCG, nasalbone, background) {
+  }
+
 
 #' Helper function to plot a likelihood ratio between the eu and aneu population
 #' 
