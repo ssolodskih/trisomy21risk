@@ -285,7 +285,82 @@ trisomy21 <- function(age, weight, crlbe, crl, nt, pappa, betahCG, nasalbone, ba
               lr_list=lr_list))
 }
 
-trisomy21 <- function(age, weight, crlbe, crl, nt, pappa, betahCG, nasalbone, background) {
+######################################################################
+#' Function to compute the trisomy18/13 risk based on 3 biomarkers (NT, PAPP-A, betahCG)
+#' and visibility of the nasal bone on the ultrasound. Several covariates (age of mother, weight of mother, CRL at measurement)
+#' are taken into account. 
+#'  
+#' @param age Age of the mother (in years)
+#' @param weight Weight of the mother (in kg)
+#' @param crlbe Crown-rump-length (in mm) at the time of the PAPP-A and betahCG measurements
+#' @param crl Crown-rump-length (in mm) at the time of the NT measurement
+#' @param nt nuchal translucency of the fetus (in mm)
+#' @param pappa Measured value of PAPP-A in maternal serum (in miU/ml)
+#' @param betahCG Measured value of betahCG in maternal serum (in miU/ml)
+#' @param nasalbone Visibility of a nasal bone on the ultrasound (0/1 or "Unknown")
+#' @param background Background probability for T21
+#' @return Posterior risk of T21.
+#' @importFrom stats dbinom
+#' @references  
+#' Merz, E., C. Thode, B. Eiben, and S. Wellek. 2016. "Prenatal Risk Calculation (PRC) 3.0: An Extended Doe-Based First-Trimester Screening Algorithm Allowing for Early Blood Sampling." Ultrasound International Open 2: E19–E26. doi:10.1055/s-0035-1569403.
+#' 
+#' @export
+
+trisomy1813 <- function(age, weight, crlbe, crl, nt, pappa, betahCG, nasalbone, background) {
+    ##Translate background number (i.e. the odds given as 1:x) to a prior probability
+  prior <- 1/(background+1)
+  
+  ##Compute weight corrected logPAPPA and logbetahCG
+  logPAPPA_corr   <- logPAPPA_corr(pappa, weight)
+  logbetahCG_corr <- logbetahCG_corr(betahCG, weight) 
+ 
+  ##Compute predicted values and reference range
+  y <- c(nt=nt, logPAPPA=logPAPPA_corr, pappa=exp(logPAPPA_corr),logbetahCG=logbetahCG_corr, betahCG=exp(logbetahCG_corr))
+  y_pred <- c(nt=nt_ls(crl), logPAPPA=logPAPPA(crlbe),logbetahCG=logbetahCG(crlbe))
+  y_lower <- y_pred + c(nt_qBands[1],pappa_qBands[1],betahCG_qBands[1])
+  y_upper <- y_pred + c(nt_qBands[2],pappa_qBands[2],betahCG_qBands[2])
+  
+  ##Compute degree of extremeness for the 3 markers
+  doe_nt <- doe( nt, y_pred["nt"], y_lower["nt"], y_upper["nt"])
+  doe_pappa <- doe( logPAPPA_corr, y_pred["logPAPPA"], y_lower["logPAPPA"], y_upper["logPAPPA"])
+  doe_betahCG <- doe( logbetahCG_corr, y_pred["logbetahCG"], y_lower["logbetahCG"], y_upper["logbetahCG"])
+
+  ##Store doEs as a list
+  doe_list <- list(nt=doe_nt, pappa=doe_pappa,betahCG=doe_betahCG)
+
+  ##Compute likelihood ratios - values from Merz et al. (2016)
+  lr_nt <- lr( (doe_nt + 2.5)^(1/7), eu=c(1.13263, 0.04320),  aneu=c(1.24310, 0.11135))
+  lr_pappa <- lr( doe_pappa,         eu=c(0.01629, 0.61358),  aneu=c(−1.70421, 0.85010))
+  lr_betahCG <- lr( doe_betahCG,     eu=c(-0.01405, 0.61453), aneu=c(−1.30688, 0.94820))
+  
+  #########
+  ##Likelihood ratio of the event that no nasal bone is observed
+  #########
+  noNosalBoneObs <- (nasalbone == "No")
+  ##Likelihood ratio for this according to Nicolaides (2004)
+  lr_NoNasalBoneObs <- dbinom(noNosalBoneObs, size=1, prob=0.65) / dbinom(noNosalBoneObs, size=1, prob=0.02)
+  lr_nasalbone <- ifelse(nasalbone == "Unknown", 1, lr_NoNasalBoneObs)
+  
+  ##Compute joint likelihood ratio
+  lr_joint <- lr_nt * lr_pappa * lr_betahCG * lr_nasalbone
+  
+  ##Store LRs as a list
+  lr_list <- list(nt=lr_nt, pappa=lr_pappa, betahCG=lr_betahCG, nasalbone=lr_nasalbone, joint=lr_joint)
+  
+  ##Compute posterior from likelihood ratio and prior
+  posterior_probability <- ppost(lr_joint, pi=prior)
+  
+  ##Risk is given in odds form as 1:y, with y=
+  tri21_onetox <- round((1-posterior_probability)/posterior_probability)
+
+  ##Return everything as a long list.  
+  return(list(PAPPA_corr=exp(logPAPPA_corr),
+              betahCG_corr=exp(logbetahCG_corr),
+              y=y, y_pred=y_pred, y_lower=y_lower, y_upper=y_upper,
+              posterior=posterior_probability, 
+              onetox=tri21_onetox, doe_list=doe_list,
+              lr_list=lr_list))
+  
   }
 
 
