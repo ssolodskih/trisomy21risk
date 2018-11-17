@@ -236,6 +236,8 @@ trisomy21 <- function(age, weight, crlbe, crl, nt, pappa, betahCG, nasalbone, ba
   ##Compute weight corrected logPAPPA and logbetahCG
   logPAPPA_corr   <- logPAPPA_corr(pappa, weight)
   logbetahCG_corr <- logbetahCG_corr(betahCG, weight) 
+  
+  ###should try this http://sci-hub.se/10.1002/uog.7755 for pappa and hcg correction
  
   ##Compute predicted values and reference range
   y <- c(nt=nt, logPAPPA=logPAPPA_corr, pappa=exp(logPAPPA_corr),logbetahCG=logbetahCG_corr, betahCG=exp(logbetahCG_corr))
