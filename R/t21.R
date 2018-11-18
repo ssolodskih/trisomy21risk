@@ -63,7 +63,7 @@ logPAPPA <- function(crlbe) {
 #' 
 #' @export
 logMedianPAPPA <- function (ga) {
-  -1.14 + 9.65*10^(-3)*ga 
+  -1.14 + 9.65*10^(-3)*ga f
 }
 
 #' FMF estimation of median of unconjugated estriol 
@@ -89,7 +89,6 @@ logMedianuE3 <- function (ga) {
 logMediantotalhCG <- function (ga) {
   -0.866 + 1.21*10^(-2)*ga 
 }
-
 
 #' FMF estimation of median of inhibin A 
 #'
@@ -176,7 +175,6 @@ gestage2crl <- function(gestage) {
   ##Loughna et al. (2009)
   ((gestage - 23.73)/8.052)^2 / 1.037
 }
-
 
 #' Reverse function of gestage2crl 
 #' 
