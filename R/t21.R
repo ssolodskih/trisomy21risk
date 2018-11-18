@@ -108,7 +108,7 @@ gestage2crl <- function(gestage) {
 #' Reverse function of gestage2crl 
 #' 
 #' @param crl Crown-rump-length (in mm)
-#' @return gestational age (in weeks)
+#' @return gestational age (in days)
 #' @seealso [trisomy21risk::gestage2crl]
 #' @export
 crl2gestage <- function(crl) {
