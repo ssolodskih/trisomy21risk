@@ -69,7 +69,7 @@ logMedianPAPPA <- function (ga) {
 #' FMF estimation of median of unconjugated estriol 
 #'
 #' @param ga gestation age at the momen of screeening in days
-#' @return The expected value of log(median betahCG) 
+#' @return The expected value of log(median uE3) 
 #' @references 
 #' Wgight, Bray, 2003; Wald, 2003
 #' 
@@ -78,6 +78,42 @@ logMedianuE3 <- function (ga) {
   0.414 - 5.95*10^(-3)*ga 
 }
 
+#' FMF estimation of median of total hCG 
+#'
+#' @param ga gestation age at the momen of screeening in days
+#' @return The expected value of log(median total hCG) 
+#' @references 
+#' Wgight, Bray, 2003; Wald, 2003
+#' 
+#' @export
+logMediantotalhCG <- function (ga) {
+  -0.866 + 1.21*10^(-2)*ga 
+}
+
+
+#' FMF estimation of median of inhibin A 
+#'
+#' @param ga gestation age at the momen of screeening in days
+#' @return The expected value of log(median inhibin A) 
+#' @references 
+#' Wgight, Bray, 2003; Wald, 2003
+#' 
+#' @export
+logMedianinhibinA <- function (ga) {
+  -1.11 + 1.55*10^(-2)*ga 
+}
+
+#' FMF estimation of median of NT 
+#'
+#' @param ga gestation age at the momen of screeening in days
+#' @return The expected value of log(median NT) 
+#' @references 
+#' Wgight, Bray, 2003; Wald, 2003
+#' 
+#' @export
+logMedianNT <- function (crl) {
+  -8.34*10^(-2) + 3.93*10^(-3)*crl 
+}
 
 #' Compute the DoE (Degrees of Extremeness) of an observation
 #' 
