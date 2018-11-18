@@ -30,6 +30,18 @@ logbetahCG <- function(crlbe) {
   5.05336 - 0.03595*crlbe +  2.18174e-4*crlbe^2 - 8.68749e-15*crlbe^7 - 2.36687e-21*crlbe^10
 }
 
+#' FMF estimation of median of free beta-hCG 
+#'
+#' @param ga gestation age at the momen of screeening in days
+#' @return The expected value of log(median betahCG) 
+#' @references 
+#' Wgight, Bray, 2003; Wald, 2003
+#' 
+#' @export
+logMedianbetahCG <- function (ga) {
+  -0.327 + 7.98*10^(-3)*ga 
+}
+
 #' Manual least squares fit to the Merz et al. (2016) data using a 10th order polynomial 
 #'
 #' @param crlbe crown rump length (in mm) at the time of the serum sampling
@@ -41,6 +53,31 @@ logbetahCG <- function(crlbe) {
 logPAPPA <- function(crlbe) {
   -1.95000 + 0.07313*crlbe - 3.63693e-4* crlbe^2 + 1.39983e-20*crlbe^10
 }
+
+#' FMF estimation of median of PAPPA 
+#'
+#' @param ga gestation age at the momen of screeening in days
+#' @return The expected value of log (median PAPPA) 
+#' @references 
+#' Wgight, Bray, 2003; Wald, 2003
+#' 
+#' @export
+logMedianPAPPA <- function (ga) {
+  -1.14 + 9.65*10^(-3)*ga 
+}
+
+#' FMF estimation of median of unconjugated estriol 
+#'
+#' @param ga gestation age at the momen of screeening in days
+#' @return The expected value of log(median betahCG) 
+#' @references 
+#' Wgight, Bray, 2003; Wald, 2003
+#' 
+#' @export
+logMedianuE3 <- function (ga) {
+  0.414 - 5.95*10^(-3)*ga 
+}
+
 
 #' Compute the DoE (Degrees of Extremeness) of an observation
 #' 
